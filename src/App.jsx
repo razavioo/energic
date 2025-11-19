@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Seven-segment font simulation style
+// Seven-segment font simulation style - yellow-orange/amber color
 const segmentStyle = {
   fontFamily: '"Courier New", Courier, monospace',
   letterSpacing: '2px',
-  textShadow: '0 0 2px #39ff14',
+  color: '#ffa500',
+  textShadow: '0 0 3px #ffa500, 0 0 6px #ffa500',
 };
 
 export default function SiloLevelMonitor() {
@@ -14,6 +15,8 @@ export default function SiloLevelMonitor() {
   const [totalVolumeM3, setTotalVolumeM3] = useState(50); // Total Tank Capacity in m3
   const [currentLevelPercent, setCurrentLevelPercent] = useState(53.2); // Value from sensor (%)
   const [isSimulating, setIsSimulating] = useState(true);
+  const [siloWidth, setSiloWidth] = useState(280); // Silo width in pixels
+  const [materialCurvature, setMaterialCurvature] = useState(15); // Material curve depth in pixels
   const intervalRef = useRef(null);
   
   // Simulate variable sensor readings
@@ -45,10 +48,9 @@ export default function SiloLevelMonitor() {
   // Properly scaled to match reference image proportions
   const svgHeight = 700;
   const svgWidth = 500;
-  const siloTopY = 100;
+  const siloTopY = 0; // Now relative to alignment container, starts at top
   const siloStraightHeight = 380;
   const siloConeHeight = 140;
-  const siloWidth = 280;
   const siloX = 140; // Center offset
   
   // Calculate fill height in pixels
@@ -60,27 +62,25 @@ export default function SiloLevelMonitor() {
 
   // --- Render ---
   return (
-    <div className="bg-white p-4 min-h-screen font-sans select-none flex flex-col items-center">
+    <div className="bg-white min-h-screen font-sans select-none flex flex-col">
       
-      {/* --- Control Panel (Simulating Sensor & Configuration) --- */}
-      <div className="w-full max-w-4xl mb-8 p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-sm flex flex-wrap gap-6 justify-between items-center">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-bold text-gray-700 mb-1">
-            Total Tank Volume (m³)
-          </label>
-          <input 
-            type="number" 
-            value={totalVolumeM3} 
-            onChange={(e) => setTotalVolumeM3(Number(e.target.value))}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
-        
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-bold text-gray-700 mb-1">
-            Sensor Data (Level %)
-          </label>
+      {/* --- Control Panel (Simulating Sensor & Configuration) - Full Width, Material Design --- */}
+      <div className="w-full px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300 shadow-lg">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-4">
+          {/* Total Volume */}
           <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Volume (m³):</label>
+            <input 
+              type="number" 
+              value={totalVolumeM3} 
+              onChange={(e) => setTotalVolumeM3(Number(e.target.value))}
+              className="w-20 px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+            />
+          </div>
+
+          {/* Level Slider */}
+          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+            <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Level:</label>
             <input 
               type="range" 
               min="0" 
@@ -91,49 +91,83 @@ export default function SiloLevelMonitor() {
                 setCurrentLevelPercent(Number(e.target.value));
                 setIsSimulating(false);
               }}
-              className="flex-1 cursor-pointer"
+              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
             />
+            <span className="text-sm font-bold text-gray-700 w-12 text-right">{currentLevelPercent.toFixed(1)}%</span>
             <button
               onClick={() => setIsSimulating(!isSimulating)}
-              className={`px-3 py-1 text-xs rounded ${isSimulating ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700'}`}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md shadow-sm transition-all ${
+                isSimulating 
+                  ? 'bg-green-500 text-white hover:bg-green-600' 
+                  : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+              }`}
             >
-              {isSimulating ? 'Pause' : 'Simulate'}
+              {isSimulating ? '⏸ Pause' : '▶ Simulate'}
             </button>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Empty (0%)</span>
-            <span className="font-bold">{currentLevelPercent.toFixed(1)}%</span>
-            <span>Full (100%)</span>
-          </div>
-        </div>
 
-        {/* Calculated Values Display */}
-        <div className="flex gap-4 text-right">
-          <div className="bg-white p-2 rounded border border-gray-200 shadow-sm min-w-[100px]">
-            <div className="text-xs text-gray-500">Volume (Liters)</div>
-            <div className="font-mono font-bold text-lg text-blue-600">
-              {currentVolumeLiters.toLocaleString(undefined, {maximumFractionDigits: 0})} L
-            </div>
+          {/* Silo Width Control */}
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Width:</label>
+            <input 
+              type="range" 
+              min="200" 
+              max="360" 
+              step="10" 
+              value={siloWidth} 
+              onChange={(e) => setSiloWidth(Number(e.target.value))}
+              className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            />
+            <span className="text-xs text-gray-600 w-10">{siloWidth}px</span>
           </div>
-          <div className="bg-white p-2 rounded border border-gray-200 shadow-sm min-w-[100px]">
-            <div className="text-xs text-gray-500">Volume (m³)</div>
-            <div className="font-mono font-bold text-lg text-blue-800">
-              {currentVolumeM3.toFixed(2)} m³
+
+          {/* Material Curvature Control */}
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-gray-600 whitespace-nowrap">Curve:</label>
+            <input 
+              type="range" 
+              min="5" 
+              max="30" 
+              step="1" 
+              value={materialCurvature} 
+              onChange={(e) => setMaterialCurvature(Number(e.target.value))}
+              className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            />
+            <span className="text-xs text-gray-600 w-8">{materialCurvature}px</span>
+          </div>
+
+          {/* Calculated Values Display */}
+          <div className="flex gap-3 ml-auto">
+            <div className="bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Liters</div>
+              <div className="font-mono font-bold text-base text-blue-600">
+                {currentVolumeLiters.toLocaleString(undefined, {maximumFractionDigits: 0})}
+              </div>
+            </div>
+            <div className="bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">m³</div>
+              <div className="font-mono font-bold text-base text-blue-800">
+                {currentVolumeM3.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* --- Main Diagram Container (Grid Layout) --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl w-full">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl w-full mx-auto px-4 py-6">
         
         {/* --- Silo Visualization (SVG) --- */}
-        <div className="lg:col-span-5 relative flex justify-center">
-          <h2 className="absolute top-0 w-full text-center text-gray-800 font-bold text-lg border-b pb-2">
-            Yo-Yo tape and weight for continuous level measurement of bulk solids.
-          </h2>
+        <div className="lg:col-span-5 relative flex flex-col min-h-[600px]">
+          {/* Background box for silo - colorful and visible */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 rounded-xl shadow-xl border-2 border-emerald-200 -z-10"></div>
           
-          <svg width={svgWidth + 200} height={svgHeight} className="mt-20 overflow-visible">
+          {/* Spacer to match analog indicator title section for alignment */}
+          <div className="h-[60px] mb-4"></div>
+          
+          {/* Alignment container - silo body starts here at Y=0 relative to this container */}
+          <div className="relative flex justify-center" style={{ height: `${totalPixelHeight}px` }}>
+            <svg width={svgWidth + 200} height={svgHeight} className="absolute top-0 left-1/2 transform -translate-x-1/2 overflow-visible" style={{ height: `${totalPixelHeight}px` }}>
             <defs>
               {/* Gradient for Bulk Solids - light indigo-blue, matching reference */}
               <linearGradient id="bulkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -204,7 +238,7 @@ export default function SiloLevelMonitor() {
                  d={`
                    M ${siloX} ${siloTopY + totalPixelHeight} 
                    L ${siloX} ${materialY} 
-                   Q ${siloX + siloWidth/2} ${materialY + 15} ${siloX + siloWidth} ${materialY}
+                   Q ${siloX + siloWidth/2} ${materialY + materialCurvature} ${siloX + siloWidth} ${materialY}
                    L ${siloX + siloWidth} ${siloTopY + totalPixelHeight} 
                    Z
                  `} 
@@ -218,7 +252,7 @@ export default function SiloLevelMonitor() {
                
                {/* Curve line for material peak - concave (middle lower) - matching reference color */}
                <path 
-                 d={`M ${siloX} ${materialY} Q ${siloX + siloWidth/2} ${materialY + 15} ${siloX + siloWidth} ${materialY}`}
+                 d={`M ${siloX} ${materialY} Q ${siloX + siloWidth/2} ${materialY + materialCurvature} ${siloX + siloWidth} ${materialY}`}
                  fill="none"
                  stroke="#6b8fc8"
                  strokeWidth="2.5"
@@ -237,22 +271,8 @@ export default function SiloLevelMonitor() {
             <text x={siloX + 10} y={siloTopY + 15} className="text-[10px] fill-gray-600">Maximum level</text>
             <line x1={siloX} y1={siloTopY + 20} x2={siloX + siloWidth} y2={siloTopY + 20} stroke="red" strokeWidth="1" strokeDasharray="4,2" />
 
-            {/* Measuring Range - simplified, only essential lines */}
-            <g stroke="#666" strokeWidth="1.5">
-               {/* Top Horizontal (Max level) */}
-               <line x1={siloX + siloWidth + 10} y1={siloTopY + 20} x2={siloX + siloWidth + 60} y2={siloTopY + 20} />
-               {/* Bottom Horizontal (Empty level) */}
-               <line x1={siloX + siloWidth/2} y1={siloTopY + totalPixelHeight - 40} x2={siloX + siloWidth + 60} y2={siloTopY + totalPixelHeight - 40} />
-               {/* Vertical Line connecting max and empty */}
-               <line x1={siloX + siloWidth + 45} y1={siloTopY + 20} x2={siloX + siloWidth + 45} y2={siloTopY + totalPixelHeight - 40} />
-            </g>
-
             {/* Empty level indicator - only essential */}
             <text x={siloX + siloWidth/2 - 30} y={siloTopY + totalPixelHeight - 35} className="text-xs fill-red-600 font-bold">Empty</text>
-            
-            {/* Level alignment lines - only top and bottom of tank to analog indicator */}
-            <line x1={siloX + siloWidth} y1={siloTopY + 20} x2={siloX + siloWidth + 80} y2={siloTopY + 20} stroke="#666" strokeWidth="1.5" strokeDasharray="4,2" />
-            <line x1={siloX + siloWidth/2} y1={siloTopY + totalPixelHeight - 40} x2={siloX + siloWidth + 80} y2={siloTopY + totalPixelHeight - 40} stroke="#666" strokeWidth="1.5" strokeDasharray="4,2" />
 
             {/* Gutter/channel at top right for LF20 - Positioned based on 16-section grid (sections 1-2) --- */}
             <g transform={`translate(${siloX + siloWidth - 50}, ${siloTopY - 5})`}>
@@ -265,19 +285,6 @@ export default function SiloLevelMonitor() {
               <line x1="8" y1="7" x2="42" y2="7" stroke="#94a3b8" strokeWidth="0.5" />
             </g>
             
-            {/* Chimney-like closed gutter in middle of silo - Positioned based on 16-section grid (section 9-10) --- */}
-            <g transform={`translate(${siloX + siloWidth/2 - 20}, ${siloTopY + 200})`}>
-              {/* Chimney body - rectangular with rounded top */}
-              <rect x="0" y="8" width="36" height="55" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.5" rx="1" />
-              {/* Chimney top cap - closed/sealed */}
-              <path d="M 0 8 Q 0 0 18 0 Q 36 0 36 8" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1.5" />
-              {/* Cap detail line */}
-              <line x1="4" y1="4" x2="32" y2="4" stroke="#94a3b8" strokeWidth="0.5" />
-              {/* Chimney detail lines inside */}
-              <line x1="6" y1="20" x2="30" y2="20" stroke="#cbd5e1" strokeWidth="0.5" />
-              <line x1="6" y1="35" x2="30" y2="35" stroke="#cbd5e1" strokeWidth="0.5" />
-              <line x1="6" y1="50" x2="30" y2="50" stroke="#cbd5e1" strokeWidth="0.5" />
-            </g>
 
             {/* --- 4. LF20 Sensor (Yo-Yo) - In gutter at top right, more detailed --- */}
             <g transform={`translate(${siloX + siloWidth - 30}, ${siloTopY - 3})`}>
@@ -302,16 +309,26 @@ export default function SiloLevelMonitor() {
               <text x="22" y="2" className="text-[10px] fill-gray-600">Level measurement</text>
               
               {/* Measuring Tape - dotted line */}
-              <line x1="0" y1="21" x2="0" y2={materialY - (siloTopY - 3) - 12} stroke="#1a1a1a" strokeDasharray="3,2" strokeWidth="2.5" opacity="0.9" />
+              <line x1="0" y1="21" x2="0" y2={materialY} stroke="#1a1a1a" strokeDasharray="3,2" strokeWidth="2.5" opacity="0.9" />
               
               {/* Sensing Weight (Red) - small square shape as in reference */}
-              <g transform={`translate(0, ${materialY - (siloTopY - 3) - 12})`}>
-                 <rect x="-6" y="-4" width="12" height="12" fill="#dc2626" stroke="#991b1b" strokeWidth="1.5" />
-                 <text x="14" y="4" className="text-[10px] fill-gray-700 font-semibold">Sensing weight</text>
+              <g transform={`translate(0, ${materialY})`}>
+                 <rect x="-6" y="-16" width="12" height="12" fill="#dc2626" stroke="#991b1b" strokeWidth="1.5" />
+                 <text x="14" y="-8" className="text-[10px] fill-gray-700 font-semibold">Sensing weight</text>
                  
-                 {/* Current Level Line - Red horizontal line extending to analog indicator (important line) */}
-                 <line x1="0" y1="0" x2={siloWidth + 80} y2="0" stroke="#dc2626" strokeWidth="2.5" />
-                 <text x={siloWidth + 85} y="4" className="text-xs fill-gray-800 font-semibold">Current level</text>
+                 {/* Current Level Line - Red horizontal line extending to analog indicator (important line) - aligned with materialY */}
+                 {/* Line length is inverse of silo width: smaller silo = longer line, larger silo = shorter line */}
+                 {/* Formula: base length (400) minus silo width, with min/max bounds */}
+                 {(() => {
+                   const baseLength = 400;
+                   const lineLength = Math.max(150, Math.min(350, baseLength - siloWidth + 200));
+                   return (
+                     <>
+                       <line x1="0" y1="0" x2={lineLength} y2="0" stroke="#dc2626" strokeWidth="2.5" />
+                       <text x={lineLength + 5} y="4" className="text-xs fill-gray-800 font-semibold">{currentLevelPercent.toFixed(1)}%</text>
+                     </>
+                   );
+                 })()}
               </g>
             </g>
 
@@ -359,29 +376,44 @@ export default function SiloLevelMonitor() {
                {/* Red dot at DF23 */}
                <circle cx="36" cy="12" r="3" fill="red" />
                <text x="42" y="15" className="text-xs fill-red-600 font-bold">Full</text>
-               {/* Red line connecting to Full mark on analog indicator (important line) */}
-               <line x1="36" y1="12" x2={siloX + siloWidth + 80} y2={siloTopY + 20} stroke="red" strokeWidth="2" strokeDasharray="4,2" />
              </g>
 
 
-          </svg>
+            </svg>
+          </div>
         </div>
 
         {/* --- Analog Indicator - Between silo and digital --- */}
-        <div className="lg:col-span-3 flex flex-col gap-6 pt-20 items-center">
+        <div className="lg:col-span-3 relative flex flex-col min-h-[600px]">
+          {/* Background box for analog indicator - colorful and visible */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl shadow-xl border-2 border-blue-200 -z-10"></div>
           
-          {/* --- Analog Indication - Aligned with silo min/max --- */}
-          <div className="flex flex-col items-center w-full">
-             <h3 className="font-bold text-gray-800 mb-1">Level indication</h3>
-             <div className="flex w-full justify-center gap-8 text-sm text-gray-600 mb-2">
-               <span>analog</span>
-               <span>or</span>
-               <span>digital</span>
-             </div>
-             
-             <div className="flex gap-3 items-center">
-               {/* Bar Indicator - aligned with silo height */}
-               <div className="relative w-14 h-[520px] bg-white border-[3px] border-black shadow-md">
+          {/* Title matching silo title position */}
+          <div className="h-[60px] flex items-end justify-center mb-4 relative z-0">
+            <h3 className="font-bold text-gray-800">Level indication</h3>
+          </div>
+          
+          {/* Alignment container - matches silo alignment container exactly */}
+          <div className="relative flex justify-center z-0" style={{ height: `${totalPixelHeight}px` }}>
+            {/* Text above - positioned absolutely to not affect bar alignment */}
+            <div className="absolute top-0 left-0 right-0 flex w-full justify-center gap-8 text-sm text-gray-600" style={{ top: '-24px' }}>
+              <span>analog</span>
+              <span>or</span>
+              <span>digital</span>
+            </div>
+            
+            {/* --- Analog Indication - Bar starts at exact top of alignment container --- */}
+            <div className="absolute top-0 left-0 right-0 flex justify-center">
+             <div className="flex gap-3 items-start">
+               {/* Labels on the left - Full and Empty with percentages */}
+               <div className="relative text-sm font-bold text-gray-800 flex flex-col justify-between" style={{ minWidth: '60px', height: `${totalPixelHeight}px` }}>
+                 <span className="absolute top-0 left-0">%100</span>
+                 <span className="absolute bottom-0 left-0">%0</span>
+               </div>
+               
+               {/* Bar Indicator - aligned with silo height - exactly matches totalPixelHeight, starts at top=0 */}
+               {/* Positioned to align red mark with red line from silo */}
+               <div className="relative w-14 bg-white border-[3px] border-black shadow-md" style={{ height: `${totalPixelHeight}px` }}>
                  {/* Light Blue Fill from 0% (bottom) to current level - matching silo color */}
                  <div 
                     className="absolute bottom-0 w-full transition-all duration-500 ease-in-out"
@@ -426,111 +458,137 @@ export default function SiloLevelMonitor() {
                     </div>
                  </div>
                  
-                 {/* Red line indicator at current level position - extends from sensing weight, visible across bar */}
-                 <div 
-                   className="absolute left-0 w-full pointer-events-none"
-                   style={{ 
-                     top: `${100 - currentLevelPercent}%`,
-                     height: '2.5px',
-                     backgroundColor: '#dc2626',
-                     zIndex: 10
-                   }}
-                 />
                </div>
                
-               {/* Percentage labels on the right side with small lines */}
-               <div className="relative h-[520px] flex flex-col justify-between py-1 text-xs font-semibold text-gray-700">
-                 <span>100%</span>
-                 <span>75%</span>
-                 <span>50%</span>
-                 <span>25%</span>
+               {/* Percentage labels on the right side - 25, 50, 75 inside the box */}
+               <div className="relative text-xs font-semibold text-gray-700" style={{ height: `${totalPixelHeight}px`, marginLeft: '8px' }}>
+                 <span className="absolute right-0" style={{ top: '25%', transform: 'translateY(-50%)' }}>75</span>
+                 <span className="absolute right-0" style={{ top: '50%', transform: 'translateY(-50%)' }}>50</span>
+                 <span className="absolute right-0" style={{ top: '75%', transform: 'translateY(-50%)' }}>25</span>
                  <span 
                    className="absolute text-red-600 font-bold"
                    style={{ 
-                     top: `${(100 - currentLevelPercent) * 5.2 - 8}px`,
-                     left: '0'
+                     top: `${100 - currentLevelPercent}%`,
+                     right: '0',
+                     transform: 'translateY(-50%)'
                    }}
                  >
                    {currentLevelPercent.toFixed(1)}%
                  </span>
-                 <span>0%</span>
                </div>
                
-               {/* Labels on the left */}
-               <div className="relative h-[520px] flex flex-col justify-between py-1 text-sm font-bold text-gray-800" style={{ minWidth: '55px' }}>
-                 <span>Full</span>
-                 <span 
-                   className="absolute text-red-600"
+               {/* Needles/pointers on the far right - outside the indicator box */}
+               <div className="relative" style={{ height: `${totalPixelHeight}px`, marginLeft: '16px' }}>
+                 {/* 100% needle at top */}
+                 <div className="absolute top-0 right-0">
+                   <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-gray-800"></div>
+                 </div>
+                 {/* 75% needle */}
+                 <div className="absolute right-0" style={{ top: '25%', transform: 'translateY(-50%)' }}>
+                   <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-gray-600"></div>
+                 </div>
+                 {/* 50% needle */}
+                 <div className="absolute right-0" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                   <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-gray-600"></div>
+                 </div>
+                 {/* 25% needle */}
+                 <div className="absolute right-0" style={{ top: '75%', transform: 'translateY(-50%)' }}>
+                   <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[10px] border-b-gray-600"></div>
+                 </div>
+                 {/* Current level needle - red */}
+                 <div 
+                   className="absolute right-0"
                    style={{ 
-                     top: `${(100 - currentLevelPercent) * 5.2 - 8}px`,
-                     left: '0'
+                     top: `${100 - currentLevelPercent}%`,
+                     transform: 'translateY(-50%)'
                    }}
                  >
-                   Current<br/>level
-                 </span>
-                 <span>Empty</span>
+                   <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[14px] border-b-red-600"></div>
+                 </div>
+                 {/* 0% needle at bottom */}
+                 <div className="absolute bottom-0 right-0">
+                   <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-gray-800"></div>
+                 </div>
                </div>
              </div>
-             
-             {/* Lines connecting silo min/max to analog indicator - will be drawn in SVG overlay */}
+            </div>
           </div>
         </div>
 
         {/* --- Digital Indicator - Right of analog --- */}
-        <div className="lg:col-span-4 flex flex-col gap-6 pt-20 items-center">
-
-          {/* --- 2. Digital Indicator - Matching reference image shape and style --- */}
-          <div className="flex justify-center">
-            <div className="bg-[#1a1a1a] p-1.5 rounded shadow-2xl border-[3px] border-gray-800 w-48 relative">
-              {/* Top section - White background with Silo 1, more prominent */}
-              <div className="bg-white border-b-[3px] border-gray-800 p-2.5 mb-1.5 rounded-t">
-                <div className="text-base font-extrabold text-black tracking-wide">Silo 1</div>
-              </div>
+        <div className="lg:col-span-4 relative flex flex-col min-h-[600px]">
+          {/* Background box for digital indicator - colorful and visible */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 rounded-xl shadow-xl border-2 border-amber-200 -z-10"></div>
+          
+          {/* Title matching silo title position */}
+          <div className="h-[60px] flex items-end justify-center mb-4 relative z-0">
+          </div>
+          
+          {/* Content area - can be positioned independently */}
+          <div className="flex justify-center relative z-0">
+            {/* --- Digital Indicator - Three main sections --- */}
+            <div className="bg-[#e5e7eb] rounded-lg shadow-2xl border-2 border-gray-400 w-64 relative overflow-hidden">
               
-              {/* Middle section - Horizontal bar with % symbol, matching reference proportions */}
-              <div className="bg-white border-[2px] border-gray-700 p-3 mb-1.5 rounded relative">
-                 <div className="flex flex-col items-center gap-1.5">
-                   {/* Horizontal bar - more prominent, matching reference */}
-                   <div className="relative w-full h-5 bg-white border-2 border-gray-500 rounded-sm">
-                     {/* Filled part from left (silo color) */}
+              {/* Row 1: Top section - Light gray background */}
+              <div className="bg-gray-200 p-3 border-b-2 border-gray-400 flex items-center justify-between">
+                 {/* Silo 1 label on left */}
+                 <div className="text-gray-800 text-sm font-bold">Silo 1</div>
+                 
+                 {/* Right side: % symbol and mini silo indicator */}
+                 <div className="flex items-center gap-2">
+                   <span className="text-gray-800 text-sm font-bold">%</span>
+                   {/* Mini silo indicator - small silo shape filled to current level */}
+                   <div className="relative w-10 h-6 border border-gray-600 bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%)' }}>
                      <div 
-                        className="absolute left-0 top-0 h-full rounded-sm transition-all duration-500 ease-in-out"
-                        style={{ 
-                          width: `${currentLevelPercent}%`,
-                          backgroundColor: '#8fa8d0'
-                        }}
-                     />
-                     {/* White empty part from right */}
-                     <div 
-                        className="absolute right-0 top-0 h-full rounded-sm transition-all duration-500 ease-in-out"
-                        style={{ 
-                          width: `${100 - currentLevelPercent}%`,
-                          backgroundColor: '#ffffff'
-                        }}
+                       className="absolute bottom-0 w-full bg-black transition-all duration-500"
+                       style={{ 
+                         height: `${currentLevelPercent}%`,
+                         clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 100%, 0 100%)'
+                       }}
                      />
                    </div>
-                   {/* % symbol - larger, matching reference */}
-                   <span className="text-sm font-extrabold text-gray-900">%</span>
                  </div>
               </div>
               
-              {/* Bottom section - Digital display with ENDA and E1141, matching reference style */}
-              <div className="bg-black border-[2px] border-gray-700 p-2.5 rounded-b">
-                 {/* Large number display - green, matching reference */}
-                 <div className="flex justify-center items-center mb-1.5">
-                   <span className="text-5xl font-extrabold tracking-wider" style={segmentStyle}>
+              {/* Row 2: Middle section - Digital display in black box with buttons outside */}
+              <div className="flex items-center gap-2">
+                 {/* Black box with number display */}
+                 <div className="bg-black p-4 flex-1 flex items-center justify-center min-h-[100px]">
+                   <span className="text-6xl font-extrabold tracking-wider leading-none" style={segmentStyle}>
                      {currentLevelPercent.toFixed(1)}
                    </span>
                  </div>
-                 {/* ENDA and model number - matching reference positioning */}
-                 <div className="flex justify-center items-baseline gap-2 pt-1">
-                   <span className="text-white font-bold text-sm italic">ENDA</span>
-                   <span className="text-gray-400 text-[10px] font-semibold">E1141</span>
+                 
+                 {/* Three buttons on the right - outside the black box */}
+                 <div className="flex flex-col gap-2 pr-2">
+                   {/* Up arrow button - green triangle */}
+                   <div className="w-7 h-7 bg-green-500 rounded-sm flex items-center justify-center shadow-md">
+                     <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+                       <path d="M5 1 L1 7 L9 7 Z" />
+                     </svg>
+                   </div>
+                   
+                   {/* Center white button - circular */}
+                   <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md mx-auto">
+                   </div>
+                   
+                   {/* Down arrow button - green triangle */}
+                   <div className="w-7 h-7 bg-green-500 rounded-sm flex items-center justify-center shadow-md">
+                     <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+                       <path d="M5 9 L1 3 L9 3 Z" />
+                     </svg>
+                   </div>
                  </div>
               </div>
+              
+              {/* Row 3: Bottom section - ENDA and model number */}
+              <div className="bg-gray-200 p-3 border-t-2 border-gray-400 flex items-center justify-between">
+                 <span className="text-gray-800 font-bold text-sm">ENDA</span>
+                 <span className="text-gray-600 text-xs font-semibold">EI141</span>
+              </div>
+              
             </div>
           </div>
-
         </div>
       </div>
     </div>
