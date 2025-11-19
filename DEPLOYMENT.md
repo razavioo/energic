@@ -2,12 +2,27 @@
 
 ## Quick Setup
 
+### Method 1: Enable GitHub Pages in Settings (Recommended)
+
 1. Go to your repository: https://github.com/razavioo/energic
 2. Navigate to **Settings** → **Pages**
-3. Under **Source**, select **"GitHub Actions"**
-4. Save the settings
-5. Wait 2-3 minutes for the workflow to complete
+3. Under **Source**, select **"GitHub Actions"** (NOT "Deploy from a branch")
+4. Click **Save**
+5. Go to **Actions** tab and wait for the workflow to complete (2-3 minutes)
 6. Your site will be available at: https://razavioo.github.io/energic/
+
+**Important**: You MUST manually enable GitHub Pages in Settings first. The workflow cannot enable it automatically without repository admin permissions.
+
+### Method 2: Alternative Deployment (If Method 1 doesn't work)
+
+If you encounter issues with GitHub Actions, you can use the alternative workflow that deploys to `gh-pages` branch:
+
+1. Go to **Settings** → **Pages**
+2. Under **Source**, select **"Deploy from a branch"**
+3. Select branch: **gh-pages**
+4. Select folder: **/ (root)**
+5. Click **Save**
+6. The alternative workflow (deploy-gh-pages.yml) will automatically deploy on each push
 
 ## Automatic Deployment
 
