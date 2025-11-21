@@ -12,9 +12,11 @@ const wss = new ws.Server({
   server: httpServer,
   handleProtocols: (protocols, request) => {
     // Support MQTT over WebSocket subprotocols
-    if (protocols.has('mqtt')) return 'mqtt';
-    if (protocols.has('mqttv3.1')) return 'mqttv3.1';
-    return false;
+    // protocols is an array of requested subprotocols
+    if (protocols.includes('mqtt')) return 'mqtt';
+    if (protocols.includes('mqttv3.1')) return 'mqttv3.1';
+    // Return first protocol if no MQTT protocol requested
+    return protocols[0] || false;
   }
 })
 wss.on('connection', function connection(ws) {
