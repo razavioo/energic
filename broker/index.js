@@ -1,6 +1,9 @@
 const aedes = require('aedes')()
 const server = require('net').createServer(aedes.handle)
-const httpServer = require('http').createServer()
+const httpServer = require('http').createServer((req, res) => {
+  res.writeHead(200)
+  res.end('MQTT Broker is running')
+})
 const ws = require('ws')
 
 // Render provides PORT. We must listen on it for HTTP/WS.
