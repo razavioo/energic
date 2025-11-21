@@ -3,7 +3,6 @@ services:
   - type: web
     name: energic-broker
     env: node
-    plan: free
     buildCommand: cd broker && npm install
     startCommand: cd broker && npm start
     envVars:
@@ -16,7 +15,6 @@ services:
   - type: worker
     name: energic-sensor
     env: node
-    plan: free
     buildCommand: cd sensor && npm install
     startCommand: cd sensor && npm start
     envVars:
@@ -29,7 +27,6 @@ services:
   - type: web
     name: energic-admin
     env: node
-    plan: free
     buildCommand: cd admin && npm install && npm run build
     startCommand: cd admin && npm start
     envVars:
@@ -40,7 +37,6 @@ services:
   - type: web
     name: energic-visualizer
     env: static
-    plan: free
     buildCommand: cd visualizer && npm install && npm run build
     staticPublishPath: visualizer/dist
     envVars:
