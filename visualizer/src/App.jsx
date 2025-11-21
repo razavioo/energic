@@ -5,7 +5,7 @@ import Configuration from './components/Configuration';
 import ControlPanel from './components/ControlPanel';
 import { useMqtt } from './hooks/useMqtt';
 
-const BROKER_URL = import.meta.env.VITE_BROKER_URL || 'wss://energic-broker.onrender.com';
+const BROKER_URL = import.meta.env.VITE_BROKER_URL || 'ws://localhost:8888';
 const TOPIC_DATA = 'energic-test-user/device/silo-01/data';
 const TOPIC_COMMAND = 'energic-test-user/device/silo-01/command';
 

@@ -1,10 +1,13 @@
 services:
   # 1. MQTT Broker
+  # NOTE: This service MUST be named 'energic-broker' for other services to find it by default.
+  # If you name it something else, update the BROKER_URL env vars below.
   - type: web
     name: energic-broker
     env: node
     buildCommand: cd broker && npm install
     startCommand: cd broker && npm start
+    plan: free
 
   # 2. Sensor Simulator
   - type: worker

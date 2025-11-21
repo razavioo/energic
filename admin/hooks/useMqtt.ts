@@ -26,13 +26,12 @@ export function useMqtt(brokerUrl: string, topic: string) {
         });
 
         client.on('message', (t, message) => {
-            if (t === topic) {
-                try {
-                    const payload = JSON.parse(message.toString());
-                    setData(payload);
-                } catch (e) {
-                    console.error('Failed to parse MQTT message', e);
-                }
+            // Allow all messages since we only subscribe to one topic pattern
+            try {
+                const payload = JSON.parse(message.toString());
+                setData(payload);
+            } catch (e) {
+                console.error('Failed to parse MQTT message', e);
             }
         });
 

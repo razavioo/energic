@@ -5,7 +5,7 @@ import { useMqtt } from '../hooks/useMqtt';
 import SensorCard from '../components/SensorCard';
 import { LayoutDashboard, Server, ShieldCheck } from 'lucide-react';
 
-const BROKER_URL = process.env.NEXT_PUBLIC_BROKER_URL || 'wss://energic-broker.onrender.com';
+const BROKER_URL = process.env.NEXT_PUBLIC_BROKER_URL || 'ws://127.0.0.1:8888';
 const TOPIC_DATA = 'energic-test-user/device/+/data'; // Wildcard subscription
 const TOPIC_COMMAND_PREFIX = 'energic-test-user/device/';
 
