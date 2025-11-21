@@ -5,11 +5,6 @@ services:
     env: node
     buildCommand: cd broker && npm install
     startCommand: cd broker && npm start
-    envVars:
-      - key: PORT
-        value: 1883
-      - key: WS_PORT
-        value: 8888
 
   # 2. Sensor Simulator
   - type: worker
