@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  broker:
+    build: ./broker
+    ports:
+      - "1883:1883"
+      - "8888:8888"
+    networks:
+      - iot-net
+
+  sensor:
+    build: ./sensor
+    environment:
+      - BROKER_URL=mqtt://broker:1883
+      - DEVICE_ID=silo-01
+    depends_on:
+      - broker
+    networks:
+      - iot-net
+
+  admin:
+    build: ./admin
+    ports:
+      - "3000:3000"
+    networks:
+      - iot-net
+
+  visualizer:
+    build: ./visualizer
+    ports:
+      - "5173:5173"
+    networks:
+      - iot-net
+
+networks:
+  iot-net:
+    driver: bridge

@@ -1,0 +1,48 @@
+services:
+  # 1. MQTT Broker
+  - type: web
+    name: energic-broker
+    env: node
+    plan: free
+    buildCommand: cd broker && npm install
+    startCommand: cd broker && npm start
+    envVars:
+      - key: PORT
+        value: 1883
+      - key: WS_PORT
+        value: 8888
+
+  # 2. Sensor Simulator
+  - type: worker
+    name: energic-sensor
+    env: node
+    plan: free
+    buildCommand: cd sensor && npm install
+    startCommand: cd sensor && npm start
+    envVars:
+      - key: BROKER_URL
+        value: wss://energic-broker.onrender.com # You must update this after first deploy, or use internal DNS if supported for WS
+      - key: DEVICE_ID
+        value: silo-01
+
+  # 3. Admin Panel
+  - type: web
+    name: energic-admin
+    env: node
+    plan: free
+    buildCommand: cd admin && npm install && npm run build
+    startCommand: cd admin && npm start
+    envVars:
+      - key: NEXT_PUBLIC_BROKER_URL
+        value: wss://energic-broker.onrender.com # Update with your actual Broker URL
+
+  # 4. Visualizer
+  - type: web
+    name: energic-visualizer
+    env: static
+    plan: free
+    buildCommand: cd visualizer && npm install && npm run build
+    staticPublishPath: visualizer/dist
+    envVars:
+      - key: VITE_BROKER_URL
+        value: wss://energic-broker.onrender.com # Update with your actual Broker URL

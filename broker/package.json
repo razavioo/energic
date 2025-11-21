@@ -1,0 +1,18 @@
+{
+    "name": "broker",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "dependencies": {
+        "aedes": "^0.51.0",
+        "aedes-server-factory": "^0.2.0",
+        "dotenv": "^16.3.1",
+        "ws": "^8.14.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}

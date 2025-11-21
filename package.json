@@ -1,21 +1,17 @@
 {
-  "name": "energic",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "puppeteer": "^24.30.0",
-    "sharp": "^0.34.5",
-    "tesseract.js": "^6.0.1",
-    "vite": "^5.0.0"
-  }
+    "name": "energic-iot-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "broker",
+        "sensor",
+        "admin",
+        "visualizer"
+    ],
+    "scripts": {
+        "dev:broker": "npm run dev --workspace=broker",
+        "dev:sensor": "npm run dev --workspace=sensor",
+        "dev:admin": "npm run dev --workspace=admin",
+        "dev:visualizer": "npm run dev --workspace=visualizer"
+    }
 }
