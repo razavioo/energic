@@ -18,10 +18,13 @@ httpServer.listen(port, function () {
   console.log('MQTT-WS Broker started on port', port)
 })
 
-// TCP (Optional, for local/private usage)
-server.listen(tcpPort, function () {
-  console.log('MQTT-TCP Broker started on port', tcpPort)
-})
+// TCP (Optional, only for local development)
+// On Render, we only use WebSocket since only one port is exposed
+if (!process.env.RENDER) {
+  server.listen(tcpPort, function () {
+    console.log('MQTT-TCP Broker started on port', tcpPort)
+  })
+}
 
 // Auth Hook
 aedes.authenticate = function (client, username, password, callback) {
