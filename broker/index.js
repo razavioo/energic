@@ -8,7 +8,15 @@ const port = process.env.PORT || 8888
 const tcpPort = 1883
 
 // WebSocket over MQTT (Primary for Render)
-const wss = new ws.Server({ server: httpServer })
+const wss = new ws.Server({
+  server: httpServer,
+  handleProtocols: (protocols, request) => {
+    // Support MQTT over WebSocket subprotocols
+    if (protocols.has('mqtt')) return 'mqtt';
+    if (protocols.has('mqttv3.1')) return 'mqttv3.1';
+    return false;
+  }
+})
 wss.on('connection', function connection(ws) {
   const stream = ws.createWebSocketStream(ws)
   aedes.handle(stream)
