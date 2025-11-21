@@ -19,7 +19,7 @@ services:
     startCommand: cd sensor && npm start
     envVars:
       - key: BROKER_URL
-        value: wss://energic-broker.onrender.com # You must update this after first deploy, or use internal DNS if supported for WS
+        value: wss://energic-broker.onrender.com
       - key: DEVICE_ID
         value: silo-01
 
@@ -31,7 +31,7 @@ services:
     startCommand: cd admin && npm start
     envVars:
       - key: NEXT_PUBLIC_BROKER_URL
-        value: wss://energic-broker.onrender.com # Update with your actual Broker URL
+        value: wss://energic-broker.onrender.com
 
   # 4. Visualizer
   - type: web
@@ -41,4 +41,4 @@ services:
     staticPublishPath: visualizer/dist
     envVars:
       - key: VITE_BROKER_URL
-        value: wss://energic-broker.onrender.com # Update with your actual Broker URL
+        value: wss://energic-broker.onrender.com
