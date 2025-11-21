@@ -12,6 +12,7 @@
         "dev:broker": "npm run dev --workspace=broker",
         "dev:sensor": "npm run dev --workspace=sensor",
         "dev:admin": "npm run dev --workspace=admin",
-        "dev:visualizer": "npm run dev --workspace=visualizer"
+        "dev:visualizer": "npm run dev --workspace=visualizer",
+        "build": "npm run build --workspace=visualizer"
     }
 }
