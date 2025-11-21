@@ -37,7 +37,7 @@ services:
   - type: web
     name: energic-visualizer
     env: static
-    buildCommand: cd visualizer && rm -rf node_modules package-lock.json && npm install && npm run build
+    buildCommand: cd visualizer && npm install && npm run build
     staticPublishPath: visualizer/dist
     envVars:
       - key: VITE_BROKER_URL

@@ -1,18 +1,14 @@
+```json
 {
-    "name": "energic-iot-monorepo",
+    "name": "energic-monorepo",
     "version": "1.0.0",
     "private": true,
-    "workspaces": [
-        "broker",
-        "sensor",
-        "admin",
-        "visualizer"
-    ],
     "scripts": {
-        "dev:broker": "npm run dev --workspace=broker",
-        "dev:sensor": "npm run dev --workspace=sensor",
-        "dev:admin": "npm run dev --workspace=admin",
-        "dev:visualizer": "npm run dev --workspace=visualizer",
-        "build": "npm run build --workspace=visualizer"
+        "dev:broker": "cd broker && npm run dev",
+        "dev:sensor": "cd sensor && npm run dev",
+        "dev:admin": "cd admin && npm run dev",
+        "dev:visualizer": "cd visualizer && npm run dev",
+        "build": "cd visualizer && npm run build"
     }
 }
+```
